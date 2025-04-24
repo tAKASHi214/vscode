@@ -1,6 +1,8 @@
 name: Build VS Code Installer
 
 on:
+  push:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -8,22 +10,22 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-    - name: Install dependencies
-      run: yarn
+      - name: Install dependencies
+        run: yarn
 
-    - name: Build VS Code for Windows
-      run: yarn gulp vscode-win32-x64-setup
+      - name: Build VS Code for Windows
+        run: yarn gulp vscode-win32-x64-setup
 
-    - name: Upload Installer
-      uses: actions/upload-artifact@v3
-      with:
-        name: vscode-installer
-        path: .build/win32/**/VSCodeSetup*.exe
+      - name: Upload Installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: vscode-installer
+          path: .build/win32/**/VSCodeSetup*.exe
