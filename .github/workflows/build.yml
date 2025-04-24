@@ -1,37 +1,29 @@
 name: Build VS Code Installer
 
 on:
-  push:
-    branches: [ main ]  # or whatever your main branch is called
-  workflow_dispatch:    # lets you manually trigger from GitHub UI
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
 
-      - name: Install Yarn (if needed)
-        run: npm install -g yarn
+    - name: Install dependencies
+      run: yarn
 
-      - name: Install dependencies
-        run: yarn
+    - name: Build VS Code for Windows
+      run: yarn gulp vscode-win32-x64-setup
 
-      - name: Compile VS Code for Windows x64
-        run: yarn gulp vscode-win32-x64
-
-      - name: Build Windows Installer
-        run: yarn gulp vscode-win32-x64-setup
-
-      - name: Upload Installer
-        uses: actions/upload-artifact@v3
-        with:
-          name: vscode-installer
-          path: .build/win32/**/VSCodeSetup*.exe
+    - name: Upload Installer
+      uses: actions/upload-artifact@v3
+      with:
+        name: vscode-installer
+        path: .build/win32/**/VSCodeSetup*.exe
