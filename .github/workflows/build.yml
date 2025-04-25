@@ -1,9 +1,9 @@
-name: Build VS Code Installer
+name: Build Sypha Installer
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
-  workflow_dispatch:
 
 jobs:
   build:
@@ -11,10 +11,10 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 20.x (required for build)
+      - name: Setup Node.js (v20.18.1)
         uses: actions/setup-node@v4
         with:
           node-version: 20.18.1
@@ -26,17 +26,32 @@ jobs:
       - name: Install global Gulp
         run: npm install -g gulp
 
-      - name: List available Gulp tasks
-        run: gulp --tasks
+      - name: Generate Sypha product.json
+        run: |
+          mkdir -p .build/vscode-win32-x64/resources/app
+          echo ^{
+            "nameShort": "Sypha",
+            "nameLong": "Sypha Editor",
+            "applicationName": "sypha",
+            "dataFolderName": ".sypha",
+            "win32AppUserModelId": "com.sypha.editor",
+            "win32MutexName": "sypha",
+            "licenseName": "MIT",
+            "licenseUrl": "https://opensource.org/licenses/MIT",
+            "reportIssueUrl": "https://github.com/YOUR_USERNAME/sypha/issues"
+          ^} > .build/vscode-win32-x64/resources/app/product.json
 
-      - name: Compile VS Code
+      - name: Compile Sypha
         run: gulp compile
 
-      - name: Build Windows User Installer (x64)
+      - name: Build VS Code for Windows x64
+        run: gulp vscode-win32-x64
+
+      - name: Build Sypha Installer (Windows x64)
         run: gulp vscode-win32-x64-user-setup
 
-      - name: Upload installer .exe
+      - name: Upload Sypha Setup Installer
         uses: actions/upload-artifact@v4
         with:
-          name: vscode-installer
-          path: .build/win32/**/VSCodeSetup*.exe
+          name: sypha-installer
+          path: .build/win32-user/**/VSCodeSetup*.exe
