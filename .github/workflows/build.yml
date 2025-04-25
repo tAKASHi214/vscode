@@ -2,33 +2,42 @@ name: Build VS Code Installer
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout repo
+      # Checkout repo
+      - name: Checkout code
         uses: actions/checkout@v3
 
+      # Set up Node.js
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: 18
 
+      # Install dependencies
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
+      # Optional: See all available gulp tasks (debug)
+      - name: List available Gulp tasks
+        run: npx gulp --tasks
+
+      # Build VS Code installer (Windows x64 user setup)
       - name: Build VS Code installer
         run: |
           npm install -g gulp
-          npx gulp vscode-win32-setup
+          npx gulp vscode-win32-x64-user-setup
 
+      # Upload build artifacts (.exe)
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: vscode-installer-artifacts
-          path: .build/win32/**/VSCodeSetup*.exe
+          name: vscode-installer
+          path: .build/win32-x64-user/**/VSCodeSetup*.exe
