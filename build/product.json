@@ -1,0 +1,8 @@
+{
+  "nameShort": "Sypha",
+  "nameLong": "Sypha Editor",
+  "applicationName": "sypha",
+  "dataFolderName": ".sypha",
+  "win32AppUserModelId": "com.sypha.editor",
+  "win32MutexName": "sypha"
+}
